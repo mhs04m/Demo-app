@@ -12,16 +12,25 @@ spec:
       labels:
         app: ml-model
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: argocd-redis-ha-haproxy  # Adjust this label if necessary
+                topologyKey: kubernetes.io/hostname
       containers:
-      - name: ml-model-container
-        image: ml-model-app:latest
-        imagePullPolicy: IfNotPresent  # Add this line
-        ports:
-        - containerPort: 8000
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1"
+        - name: ml-model-container
+          image: ml-model-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
